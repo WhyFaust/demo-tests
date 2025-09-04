@@ -2,6 +2,7 @@ import pytest
 import allure
 from pages.login_page import LoginPage
 from pages.inventory_page import InventoryPage
+from selenium.webdriver.remote.webdriver import WebDriver
 
 USERS = [
     "standard_user",
@@ -14,9 +15,9 @@ USERS = [
 
 PASSWORD = "secret_sauce"
 
-@allure.feature("Авторизация")
+@allure.feature("Авторизация") # type: ignore
 @pytest.mark.parametrize("username", USERS)
-def test_login_users(browser, username):
+def test_login_users(browser: WebDriver, username: str) -> None:
     login_page = LoginPage(browser)
     inventory_page = InventoryPage(browser)
 
@@ -31,18 +32,14 @@ def test_login_users(browser, username):
         with allure.step("Проверяем, что открыта страница товаров"):
             assert inventory_page.is_opened()
 
-@allure.feature("Логаут")
-def test_logout(browser):
+@allure.feature("Логаут") # type: ignore
+def test_logout(browser: WebDriver) -> None:
     login_page = LoginPage(browser)
     inventory_page = InventoryPage(browser)
 
-    # логинимся
     login_page.open()
-    login_page.login("standard_user", "secret_sauce")
+    login_page.login("standard_user", PASSWORD)
     assert inventory_page.is_opened()
 
-    # разлогиниваемся
     inventory_page.logout()
-
-    # проверяем, что снова открылась форма логина
     assert login_page.is_displayed()
