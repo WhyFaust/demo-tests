@@ -1,0 +1,5 @@
+selenium
+pytest
+mypy
+ruff
+allure-pytest
