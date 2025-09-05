@@ -3,3 +3,19 @@ python_version = "3.13"
 strict = true
 ignore_missing_imports = true
 files = "pages,tests"
+mypy_path = ["typings"]
+[tool.ruff]
+line-length = 120
+src = ["pages", "tests", "conftest.py"]
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D100", "D101", "D102", "D103", "D104", "D107", # Докстринги на всё подряд
+    "D400", "D415", # Точки в докстрингах
+    "N812",         # expected_conditions as EC
+    "S101",         # assert в тестах
+    "S105",         # тестовые пароли
+    "ANN401",       # Any в pytest
+    "TRY003", "EM102", # f-строки в raise
+    "PGH003",       # общий # type: ignore
+]

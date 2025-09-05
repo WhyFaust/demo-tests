@@ -1,40 +1,45 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import allure
 from selenium.webdriver.common.by import By
-from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+
+if TYPE_CHECKING:
+    from selenium.webdriver.remote.webdriver import WebDriver
 
 
 class LoginPage:
-    URL: str = "https://www.saucedemo.com/"
-    USERNAME_INPUT = (By.ID, "user-name")
-    PASSWORD_INPUT = (By.ID, "password")
-    LOGIN_BUTTON = (By.ID, "login-button")
-    ERROR_MESSAGE = (By.CSS_SELECTOR, "[data-test='error']")
+    """Страница логина."""
 
     def __init__(self, driver: WebDriver) -> None:
+        """Инициализируй страницу логина."""
         self.driver = driver
 
-    @allure.step("Открываем страницу логина")
+    @allure.step("Открыть страницу логина")
     def open(self) -> None:
-        self.driver.get(self.URL)
+        """Открой страницу логина."""
+        self.driver.get("https://www.saucedemo.com/")
 
-    @allure.step("Логинимся пользователем: {username}")
+    @allure.step("Выполнить вход")
     def login(self, username: str, password: str) -> None:
-        self.driver.find_element(*self.USERNAME_INPUT).send_keys(username)
-        self.driver.find_element(*self.PASSWORD_INPUT).send_keys(password)
-        self.driver.find_element(*self.LOGIN_BUTTON).click()
+        """Выполни вход c заданными логином и паролем."""  # латинская c
+        self.driver.find_element(By.ID, "user-name").send_keys(username)
+        self.driver.find_element(By.ID, "password").send_keys(password)
+        self.driver.find_element(By.ID, "login-button").click()
 
-    @allure.step("Проверяем, что форма логина отображается")
+    @allure.step("Проверить отображение формы логина")
     def is_displayed(self) -> bool:
-        """Проверка, что форма логина отображается"""
+        """Проверь, что форма логина отображается."""
         return bool(
             WebDriverWait(self.driver, 5).until(
-                EC.visibility_of_element_located(self.USERNAME_INPUT)
-            )
+                ec.presence_of_element_located((By.ID, "login-button")),
+            ),
         )
 
-    @allure.step("Получаем сообщение об ошибке")
+    @allure.step("Получаем сообщение ошибки")
     def get_error_message(self) -> str:
-        element = self.driver.find_element(*self.ERROR_MESSAGE)
+        element = self.driver.find_element(By.CSS_SELECTOR, "[data-test='error']")
         return element.text if element else ""
